@@ -146,11 +146,11 @@ class Graph:
         return self.__edges[edgeId]
 
 
-    def parseVertices(self):
+    def parseNodes(self):
         for nodeId in self.__nodes:
             yield nodeId
 
-    def parseAllEdges(self):
+    def parseEdges(self):
         for edge in self.__edges:
             yield edge
 
