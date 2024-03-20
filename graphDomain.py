@@ -1,9 +1,29 @@
+from copy import deepcopy
 
 class Graph:
     def __init__(self):
         self.__nodes = []  # nodes = [nodeId1, nodeId2, ...]
         self.__edges = {}  # edge[edgeId] = (source, destination)
         self.__edgeCosts = {}  # edge[edgeId] = cost of edge
+        self.latestGeneratedEdgeId = 0
+
+    def overwriteNodes(self, newNodesList):
+        self.__nodes = newNodesList
+    def overwriteEdges(self, newEdgesList):
+        self.__edges = newEdgesList
+    def overwriteEdgeCosts(self, newEdgesCostList):
+        self.__edgesCosts = newEdgesCostList
+
+    def copyGraph(self):
+        newNodesList = deepcopy(self.__nodes)
+        newEdgesList = deepcopy(self.__edges)
+        newEdgesCostsList = deepcopy(self.__edgesCosts)
+        newGraph = Graph()
+        newGraph.overwriteNodes(newNodesList)
+        newGraph.overwriteEdges(newEdgesList)
+        newGraph.overwriteEdgeCosts(newEdgesCostsList)
+        return newGraph
+
 
     def createNode(self, nodeId):
         if nodeId not in self.__nodes:
@@ -25,6 +45,11 @@ class Graph:
             return False
 
 
+    def checkIfNodeExists(self, nodeId):
+        if nodeId not in self.__nodes:
+            return False
+        return True
+
     def checkIfExistsEdgeFromNodeToNode(self, node1, node2):
         for edgeId in self.__edges:
             if self.__edges[edgeId][0] == node1 and self.__edges[edgeId][1] == node2:
@@ -34,7 +59,7 @@ class Graph:
 
 
     def addEdge(self, source, target, edgeId, cost=0):
-        if self.checkIfExistsEdgeFromNodeToNode(source, target) is -1:
+        if self.checkIfExistsEdgeFromNodeToNode(source, target) != -1:
             return False
         self.__edges[edgeId] = (source, target)
         self.__edgeCosts[edgeId] = cost
@@ -55,6 +80,13 @@ class Graph:
         self.__edgeCosts.pop(edgeId)
         return True
 
+
+    def setEdgeCost(self, edgeId, cost):
+        self.__edgeCosts[edgeId] = cost
+
+    def getNodes(self):
+        return self.__nodes
+
     def getNumberOfNodes(self):
         return len(self.__nodes)
 
@@ -64,10 +96,15 @@ class Graph:
     def getAllEdges(self):
         return list(self.__edges)
 
+    def getEdgeEndpoints(self, edgeId):
+        if edgeId not in self.__edges:
+            return None
+        return self.__edges[edgeId]
+
     def hasEdge(self, source, target):
-        if self.checkIfExistsEdgeFromNodeToNode(source, target) is not -1:
-            return True
-        return False
+        if self.checkIfExistsEdgeFromNodeToNode(source, target) == -1:
+            return False
+        return self.checkIfExistsEdgeFromNodeToNode(source, target)
 
     def getOutDegree(self, source):
         degree = 0
@@ -99,7 +136,7 @@ class Graph:
 
 
     def getEdgeIdPrice(self, edgeId):
-        return self.__edges[edgeId]
+        return self.__edgeCosts[edgeId]
 
 
     def getEdgeNodesPrice(self, source, destination):
@@ -107,3 +144,23 @@ class Graph:
         if edgeId == -1:
             return False
         return self.__edges[edgeId]
+
+
+    def parseVertices(self):
+        for nodeId in self.__nodes:
+            yield nodeId
+
+    def parseAllEdges(self):
+        for edge in self.__edges:
+            yield edge
+
+    def parseOutboundEdges(self, nodeId):
+        for edgeId in self.__edges:
+            if self.__edges[edgeId][0] == nodeId:
+                yield edgeId
+
+    def parseInboundEdges(self, nodeId):
+        for edgeId in self.__edges:
+            if self.__edges[edgeId][1] == nodeId:
+                yield edgeId
+
