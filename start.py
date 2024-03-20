@@ -4,6 +4,12 @@ from graphDomain import Graph
 
 
 def parseFile(filename, graph):
+    """
+    Reads data from a file and populates the graph with nodes and edges
+    :param filename: the name of the file to read from
+    :param graph: the graph to populate
+    :return: None
+    """
     with open(filename, 'r') as file:
         lines = file.readlines()
         numberOfVertices,numberOfEdges = lines[0].split(" ")
@@ -18,6 +24,13 @@ def parseFile(filename, graph):
 
 
 def createRandomGraphFile(filename, numberOfNodes, numberOfEdges):
+    """
+    Generates a random graph and writes it to a file
+    :param filename: the name of the file to write to
+    :param numberOfNodes: the number of nodes to create
+    :param numberOfEdges: the number of edges to create
+    :return: None
+    """
     alreadyExistingNodes = []
     addedEdges = 0
     textToWrite = F"{numberOfNodes} {numberOfEdges}\n"
@@ -41,6 +54,12 @@ def createRandomGraphFile(filename, numberOfNodes, numberOfEdges):
 
 
 def writeGraphToFile(graph, filename):
+    """
+    Writes the details of the graph into a file
+    :param graph: the graph to write to file
+    :param filename: the name of the file to write to
+    :return: None
+    """
     numberOfNodes = graph.getNumberOfNodes()
     numberOfEdges = graph.getNumberOfEdges()
 
@@ -54,6 +73,11 @@ def writeGraphToFile(graph, filename):
 
 
 def displayGraphNodes(graph):
+    """
+    Prints the number of nodes in the graph and lists each node
+    :param graph: the graph
+    :return: None
+    """
     numberOfNodes = graph.getNumberOfNodes()
     textToPrint = f"Number of nodes: {numberOfNodes}\n\n"
     for node in graph.parseNodes():
@@ -61,6 +85,11 @@ def displayGraphNodes(graph):
     print(textToPrint)
 
 def displayGraphEdges(graph):
+    """
+    Prints the number of edges in the graph and details of each edge (id, source and destination) and its cost
+    :param graph: the graph
+    :return: None
+    """
     numberOfEdges = graph.getNumberOfEdges()
     textToPrint = f"Number of edges: {numberOfEdges}\n\n"
     for edge in graph.parseEdges():
@@ -71,8 +100,11 @@ def displayGraphEdges(graph):
 
 
 
+
+# Visual functions
+
 def initialMenu(graph):
-    option = int(input("INITIAL MENU\nChoose an option:\n1.Read from file\n2.Create random graph\n"))
+    option = int(input(" >> INITIAL MENU <<\nChoose an option:\n1.Read from file\n2.Create random graph\n"))
     if option == 1:
         parseFile("graph1k.txt", graph)
     elif option == 2:
@@ -107,6 +139,3 @@ def start():
     menu(graph)
 
 start()
-
-
-# TODO specifications
