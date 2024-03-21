@@ -13,14 +13,22 @@ def parseFile(filename, graph):
     with open(filename, 'r') as file:
         lines = file.readlines()
         numberOfVertices,numberOfEdges = lines[0].split(" ")
+        numberOfEdges = int(numberOfEdges)
+        numberOfVertices = int(numberOfVertices)
         lines.pop(0)
+        edgesParsed = 0
+
+
         for line in lines:
+            if numberOfEdges != 0 and ((edgesParsed * 100) / numberOfEdges) % 10 == 0:
+                print(f"Progress: {(edgesParsed * 100) // numberOfEdges}%")
             nodeId, destination, cost = line.split(" ")
-            if not graph.checkIfNodeExists(nodeId):
-                graph.createNode(nodeId)
+            graph.createNode(nodeId)
             graph.latestGeneratedEdgeId += 1
+            edgesParsed += 1
             latestGeneratedEdgeId = graph.latestGeneratedEdgeId
             graph.addEdge(nodeId, destination, latestGeneratedEdgeId, cost)
+        print(f"Progress: 100%")
 
 
 def createRandomGraphFile(filename, numberOfNodes, numberOfEdges):
@@ -103,15 +111,15 @@ def displayGraphEdges(graph):
 
 # Visual functions
 
-def initialMenu(graph):
+def initialMenu(graph, readFromFile, randomlyGeneratedFile):
     option = int(input(" >> INITIAL MENU <<\nChoose an option:\n1.Read from file\n2.Create random graph\n"))
     if option == 1:
-        parseFile("graph1k.txt", graph)
+        parseFile(readFromFile, graph)
     elif option == 2:
         numberOfNodes = int(input("Insert the number of vertices the generated graph should have: "))
         numberOfEdges = int(input("Insert the number of edges the generated graph should have: "))
-        createRandomGraphFile("randomlyGeneratedFile.txt", numberOfNodes, numberOfEdges)
-        parseFile("randomlyGeneratedFile.txt", graph)
+        createRandomGraphFile(randomlyGeneratedFile, numberOfNodes, numberOfEdges)
+        parseFile(randomlyGeneratedFile, graph)
 
 
 def printMenu():
@@ -135,7 +143,9 @@ def menu(graph):
 
 def start():
     graph = Graph()
-    initialMenu(graph)
+    readFromFile = "graph1m.txt"
+    randomlyGeneratedFile = "randomlyGeneratedFile.txt"
+    initialMenu(graph, readFromFile, randomlyGeneratedFile)
     menu(graph)
 
 start()

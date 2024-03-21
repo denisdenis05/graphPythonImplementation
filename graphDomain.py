@@ -2,7 +2,7 @@ from copy import deepcopy
 
 class Graph:
     def __init__(self):
-        self.__nodes = []  # nodes = [nodeId1, nodeId2, ...]
+        self.__nodes = {}  # nodes = {nodeId1: True, nodeId2: True, ...}
         self.__edges = {}  # edge[edgeId] = (source, destination)
         self.__edgeCosts = {}  # edge[edgeId] = cost of edge
         self.latestGeneratedEdgeId = 0
@@ -46,15 +46,12 @@ class Graph:
 
     def createNode(self, nodeId):
         """
-        Adds a new node to the graph with the specified node ID if it does not already exist
+        Adds a new node to the graph with the specified node ID, has no effect if it already exists
         :param nodeId: node to add to the graph
-        :return: True if the node was added, False if already added
+        :return:
         """
-        if nodeId not in self.__nodes:
-            self.__nodes.append(nodeId)
-            return True
-        else:
-            return False
+        self.__nodes[nodeId] = True
+
 
     def removeNode(self, nodeId):
         """
@@ -62,10 +59,8 @@ class Graph:
         :param nodeId: node to remove from the graph
         :return: True if node was removed, False if not in graph
         """
-        if nodeId in self.__nodes:
-            for nodeNr in range(len(self.__nodes)):
-                if self.__nodes[nodeNr] == nodeId:
-                    self.__nodes.pop(nodeNr)
+        if nodeId in self.__nodes.keys():
+            self.__nodes.pop(nodeId)
             for edgeId in self.__edges:
                 if self.__edges[edgeId][0] == nodeId or self.__edges[edgeId][1] == nodeId:
                     self.__edges.pop(edgeId)
@@ -80,7 +75,7 @@ class Graph:
         :param nodeId: node id to check if in the graph
         :return: True if node is in the graph, False otherwise
         """
-        if nodeId not in self.__nodes:
+        if nodeId not in self.__nodes.keys():
             return False
         return True
 
@@ -105,13 +100,10 @@ class Graph:
         :param target: the destination node
         :param edgeId: the given edge id
         :param cost: the cost of the edge (optional, will be set as 0 if not specified)
-        :return: True if edge was added, False if edge from source to destination already exists
+        :return: None
         """
-        if self.checkIfExistsEdgeFromNodeToNode(source, target) != -1:
-            return False
         self.__edges[edgeId] = (source, target)
         self.__edgeCosts[edgeId] = cost
-        return True
 
     def removeEdgeById(self, edgeId):
         """
@@ -261,7 +253,7 @@ class Graph:
         Generator function that yields each node in the graph
         :return: an iterator with each node in the graph
         """
-        for nodeId in self.__nodes:
+        for nodeId in self.__nodes.keys():
             yield nodeId
 
     def parseEdges(self):
