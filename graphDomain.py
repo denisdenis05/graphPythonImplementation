@@ -61,7 +61,8 @@ class Graph:
         """
         if nodeId in self.__nodes.keys():
             self.__nodes.pop(nodeId)
-            for edgeId in self.__edges:
+            edges = list(self.__edges.keys())
+            for edgeId in edges:
                 if self.__edges[edgeId][0] == nodeId or self.__edges[edgeId][1] == nodeId:
                     self.__edges.pop(edgeId)
             return True

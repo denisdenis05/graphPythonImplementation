@@ -10,6 +10,8 @@ def parseFile(filename, graph):
     :param graph: the graph to populate
     :return: None
     """
+    print("Loading...\n")
+
     with open(filename, 'r') as file:
         lines = file.readlines()
         numberOfVertices,numberOfEdges = lines[0].split(" ")
@@ -18,11 +20,13 @@ def parseFile(filename, graph):
         lines.pop(0)
         edgesParsed = 0
 
-
         for line in lines:
             if numberOfEdges != 0 and ((edgesParsed * 100) / numberOfEdges) % 10 == 0:
                 print(f"Progress: {(edgesParsed * 100) // numberOfEdges}%")
             nodeId, destination, cost = line.split(" ")
+            nodeId = int(nodeId)
+            destination = int(destination)
+            cost = int(cost)
             graph.createNode(nodeId)
             graph.latestGeneratedEdgeId += 1
             edgesParsed += 1
@@ -39,6 +43,8 @@ def createRandomGraphFile(filename, numberOfNodes, numberOfEdges):
     :param numberOfEdges: the number of edges to create
     :return: None
     """
+    print("Loading...\n")
+
     alreadyExistingNodes = []
     addedEdges = 0
     textToWrite = F"{numberOfNodes} {numberOfEdges}\n"
@@ -68,6 +74,8 @@ def writeGraphToFile(graph, filename):
     :param filename: the name of the file to write to
     :return: None
     """
+    print("Loading...\n")
+
     numberOfNodes = graph.getNumberOfNodes()
     numberOfEdges = graph.getNumberOfEdges()
 
@@ -86,6 +94,8 @@ def displayGraphNodes(graph):
     :param graph: the graph
     :return: None
     """
+    print("Loading...\n")
+
     numberOfNodes = graph.getNumberOfNodes()
     textToPrint = f"Number of nodes: {numberOfNodes}\n\n"
     for node in graph.parseNodes():
@@ -98,6 +108,8 @@ def displayGraphEdges(graph):
     :param graph: the graph
     :return: None
     """
+    print("Loading...\n")
+
     numberOfEdges = graph.getNumberOfEdges()
     textToPrint = f"Number of edges: {numberOfEdges}\n\n"
     for edge in graph.parseEdges():
@@ -107,6 +119,41 @@ def displayGraphEdges(graph):
     print(textToPrint)
 
 
+def displayAllOutboundEdges(graph):
+    """
+    Prints the number of edges in the graph and each node with its outbound edges
+    :param graph: the graph
+    :return: None
+    """
+    print("Loading...\n")
+
+    numberOfNodes = graph.getNumberOfNodes()
+    textToPrint = f"Number of nodes: {numberOfNodes}\n\n"
+    for node in graph.parseNodes():
+        textToPrint += f"Node: {node}: "
+        for outboundEdge in graph.parseOutboundEdges(node):
+            edgeEndpoints = graph.getEdgeEndpoints(outboundEdge)
+            textToPrint += f"{outboundEdge}{edgeEndpoints} "
+        textToPrint += "\n"
+    print(textToPrint)
+
+def displayAllInboundEdges(graph):
+    """
+    Prints the number of edges in the graph and each node with its inbound edges
+    :param graph: the graph
+    :return: None
+    """
+    print("Loading...\n")
+
+    numberOfNodes = graph.getNumberOfNodes()
+    textToPrint = f"Number of nodes: {numberOfNodes}\n\n"
+    for node in graph.parseNodes():
+        textToPrint += f"Node: {node}: "
+        for outboundEdge in graph.parseInboundEdges(node):
+            edgeEndpoints = graph.getEdgeEndpoints(outboundEdge)
+            textToPrint += f"{outboundEdge}{edgeEndpoints} "
+        textToPrint += "\n"
+    print(textToPrint)
 
 
 # Visual functions
@@ -121,6 +168,39 @@ def initialMenu(graph, readFromFile, randomlyGeneratedFile):
         createRandomGraphFile(randomlyGeneratedFile, numberOfNodes, numberOfEdges)
         parseFile(randomlyGeneratedFile, graph)
 
+def modifyMenu(graph):
+    printModifyMenu()
+    option = int(input())
+    if option == 1:
+        nodeId = int(input("Insert the node id: "))
+        graph.createNode(nodeId)
+    elif option == 2:
+        nodeId = int(input("Insert the node id: "))
+        graph.removeNode(nodeId)
+    elif option == 3:
+        edgeId = int(input("Insert the edge id: "))
+        while edgeId <= graph.latestGeneratedEdgeId:
+            edgeId = int(input("!! Edge already generated. Insert another previously unused edge id: "))
+        sourceNode = int(input("Insert the source node: "))
+        destinationNode = int(input("Insert the destination node: "))
+        cost = int(input("Insert the edge cost: "))
+        graph.addEdge(sourceNode, destinationNode, edgeId, cost)
+    elif option == 4:
+        edgeId = int(input("Insert the edge id: "))
+        graph.removeEdgeById(edgeId)
+    elif option == 5:
+        edgeId = int(input("Insert the edge id: "))
+        cost = int(input("Insert the new edge cost: "))
+        graph.setEdgeCost(edgeId, cost)
+
+
+def printModifyMenu():
+    print("\n>> Choose an option:")
+    print("1.Add a node to the graph")
+    print("2.Delete a node from the graph")
+    print("3.Add an edge to the graph")
+    print("4.Delete an edge from the graph")
+    print("5.Update the cost of an edge")
 
 def printMenu():
     print("\nChoose an option:")
@@ -128,7 +208,8 @@ def printMenu():
     print("2.Display the edges")
     print("3.Display the outbound edges for each node")
     print("4.Display the inbound edges for each node")
-    print("5.Write the graph inside graph.txt file\n")
+    print("5.Write the graph inside graph.txt file")
+    print("6.Modify the graph\n")
 
 def menu(graph):
     while True:
@@ -138,12 +219,18 @@ def menu(graph):
             displayGraphNodes(graph)
         elif option == 2:
             displayGraphEdges(graph)
+        elif option == 3:
+            displayAllOutboundEdges(graph)
+        elif option == 4:
+            displayAllInboundEdges(graph)
         elif option == 5:
             writeGraphToFile(graph, "graph.txt")
+        elif option == 6:
+            modifyMenu(graph)
 
 def start():
     graph = Graph()
-    readFromFile = "graph1m.txt"
+    readFromFile = "graph1k.txt"
     randomlyGeneratedFile = "randomlyGeneratedFile.txt"
     initialMenu(graph, readFromFile, randomlyGeneratedFile)
     menu(graph)
