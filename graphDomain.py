@@ -48,7 +48,7 @@ class Graph:
         """
         Adds a new node to the graph with the specified node ID, has no effect if it already exists
         :param nodeId: node to add to the graph
-        :return:
+        :return: None
         """
         self.__nodes[nodeId] = True
 

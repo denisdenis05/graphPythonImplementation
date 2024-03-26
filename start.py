@@ -11,28 +11,30 @@ def parseFile(filename, graph):
     :return: None
     """
     print("Loading...\n")
+    try:
+        with open(filename, 'r') as file:
+            lines = file.readlines()
+            numberOfVertices,numberOfEdges = lines[0].split(" ")
+            numberOfEdges = int(numberOfEdges)
+            numberOfVertices = int(numberOfVertices)
+            lines.pop(0)
+            edgesParsed = 0
 
-    with open(filename, 'r') as file:
-        lines = file.readlines()
-        numberOfVertices,numberOfEdges = lines[0].split(" ")
-        numberOfEdges = int(numberOfEdges)
-        numberOfVertices = int(numberOfVertices)
-        lines.pop(0)
-        edgesParsed = 0
-
-        for line in lines:
-            if numberOfEdges != 0 and ((edgesParsed * 100) / numberOfEdges) % 10 == 0:
-                print(f"Progress: {(edgesParsed * 100) // numberOfEdges}%")
-            nodeId, destination, cost = line.split(" ")
-            nodeId = int(nodeId)
-            destination = int(destination)
-            cost = int(cost)
-            graph.createNode(nodeId)
-            graph.latestGeneratedEdgeId += 1
-            edgesParsed += 1
-            latestGeneratedEdgeId = graph.latestGeneratedEdgeId
-            graph.addEdge(nodeId, destination, latestGeneratedEdgeId, cost)
-        print(f"Progress: 100%")
+            for line in lines:
+                if numberOfEdges != 0 and ((edgesParsed * 100) / numberOfEdges) % 10 == 0:
+                    print(f"Progress: {(edgesParsed * 100) // numberOfEdges}%")
+                nodeId, destination, cost = line.split(" ")
+                nodeId = int(nodeId)
+                destination = int(destination)
+                cost = int(cost)
+                graph.createNode(nodeId)
+                graph.latestGeneratedEdgeId += 1
+                edgesParsed += 1
+                latestGeneratedEdgeId = graph.latestGeneratedEdgeId
+                graph.addEdge(nodeId, destination, latestGeneratedEdgeId, cost)
+            print(f"Progress: 100%")
+    except:
+        print("Cannot parse the file. Verify the file.")
 
 
 def createRandomGraphFile(filename, numberOfNodes, numberOfEdges):
@@ -45,6 +47,11 @@ def createRandomGraphFile(filename, numberOfNodes, numberOfEdges):
     """
     print("Loading...\n")
 
+    if (numberOfNodes*numberOfNodes < numberOfEdges):
+        with open(filename, 'w+') as file:
+            file.write(f"Invalid size. A graph with {numberOfNodes} nodes can have maximum {numberOfNodes*numberOfNodes} edges.")
+        return
+
     alreadyExistingNodes = []
     addedEdges = 0
     textToWrite = F"{numberOfNodes} {numberOfEdges}\n"
@@ -55,7 +62,7 @@ def createRandomGraphFile(filename, numberOfNodes, numberOfEdges):
             maximumEdges = 2* ((numberOfEdges - addedEdges) // (numberOfNodes - nodeId + 1))
             numberOfEdgesRemaining = randint(maximumEdges//2 , maximumEdges)
         for edge in range(numberOfEdgesRemaining):
-            randomNode = randint(0, numberOfNodes)
+            randomNode = randint(0, numberOfNodes+1)
             while (nodeId, randomNode) in alreadyExistingNodes:
                 randomNode = randint(0, numberOfNodes)
             alreadyExistingNodes.append((nodeId, randomNode))
@@ -230,7 +237,7 @@ def menu(graph):
 
 def start():
     graph = Graph()
-    readFromFile = "graph1k.txt"
+    readFromFile = "graph1m.txt"
     randomlyGeneratedFile = "randomlyGeneratedFile.txt"
     initialMenu(graph, readFromFile, randomlyGeneratedFile)
     menu(graph)
