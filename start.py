@@ -17,6 +17,7 @@ def parseFile(filename, graph):
             numberOfVertices,numberOfEdges = lines[0].split(" ")
             numberOfEdges = int(numberOfEdges)
             numberOfVertices = int(numberOfVertices)
+            graph.numberOfNodes = numberOfVertices
             lines.pop(0)
             edgesParsed = 0
 
@@ -162,6 +163,20 @@ def displayAllInboundEdges(graph):
         textToPrint += "\n"
     print(textToPrint)
 
+def displayNumberOfNodes(graph):
+    print(f"Number of nodes: {graph.getNumberOfNodes()}\n")
+
+def displayNumberOfEdges(graph):
+    print(f"Number of edges: {graph.getNumberOfEdges()}\n")
+
+def displayInDegree(graph, node):
+    print(f"Inner degree: {graph.getInDegree(node)}\n")
+
+def displayOutDegree(graph, node):
+    print(f"Outer degree: {graph.getOutDegree(node)}\n")
+
+def displayEdgeCost(graph, edgeId):
+    print(f"Cost: {graph.getEdgeCost(edgeId)}\n")
 
 # Visual functions
 
@@ -175,15 +190,18 @@ def initialMenu(graph, readFromFile, randomlyGeneratedFile):
         createRandomGraphFile(randomlyGeneratedFile, numberOfNodes, numberOfEdges)
         parseFile(randomlyGeneratedFile, graph)
 
+
 def modifyMenu(graph):
     printModifyMenu()
     option = int(input())
     if option == 1:
         nodeId = int(input("Insert the node id: "))
         graph.createNode(nodeId)
+        graph.numberOfNodes += 1
     elif option == 2:
         nodeId = int(input("Insert the node id: "))
         graph.removeNode(nodeId)
+        graph.numberOfNodes -= 1
     elif option == 3:
         edgeId = int(input("Insert the edge id: "))
         while edgeId <= graph.latestGeneratedEdgeId:
@@ -209,6 +227,7 @@ def printModifyMenu():
     print("4.Delete an edge from the graph")
     print("5.Update the cost of an edge")
 
+
 def printMenu():
     print("\nChoose an option:")
     print("1.Display the nodes")
@@ -216,7 +235,13 @@ def printMenu():
     print("3.Display the outbound edges for each node")
     print("4.Display the inbound edges for each node")
     print("5.Write the graph inside graph.txt file")
-    print("6.Modify the graph\n")
+    print("6.Display the number of nodes")
+    print("7.Display the number of edges")
+    print("8.Display the in degree of node")
+    print("9.Display the out degree of node")
+    print("10.Display the cost of an edge")
+    print("11.Modify the graph\n")
+
 
 def menu(graph):
     while True:
@@ -233,13 +258,28 @@ def menu(graph):
         elif option == 5:
             writeGraphToFile(graph, "graph.txt")
         elif option == 6:
+            displayNumberOfNodes(graph)
+        elif option == 7:
+            displayNumberOfEdges(graph)
+        elif option == 8:
+            nodeId = int(input("Enter the node id: "))
+            displayInDegree(graph, nodeId)
+        elif option == 9:
+            nodeId = int(input("Enter the node id: "))
+            displayOutDegree(graph, nodeId)
+        elif option == 10:
+            nodeId = int(input("Enter the edge id: "))
+            displayEdgeCost(graph, nodeId)
+        elif option == 11:
             modifyMenu(graph)
+
 
 def start():
     graph = Graph()
-    readFromFile = "graph1m.txt"
+    readFromFile = "graph1k.txt"
     randomlyGeneratedFile = "randomlyGeneratedFile.txt"
     initialMenu(graph, readFromFile, randomlyGeneratedFile)
     menu(graph)
+
 
 start()
